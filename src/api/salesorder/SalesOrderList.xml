@@ -1,0 +1,20 @@
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
+    xmlns:glob="http://sap.com/xi/SAPGlobal20/Global">
+    <soap:Header/>
+    <soap:Body>
+        <glob:SalesOrderByElementsQuery_sync>
+            <!--Optional:-->
+            <SalesOrderSelectionByElements>
+                <!--Zero or more repetitions:-->
+                <SelectionByID>
+                    <!--Optional:-->
+                    <InclusionExclusionCode>I</InclusionExclusionCode>
+                    <IntervalBoundaryTypeCode>1</IntervalBoundaryTypeCode>
+                    <!--Optional:-->
+                    <LowerBoundaryID>2723</LowerBoundaryID>
+                    <!--Optional:-->
+                    <UpperBoundaryID>2800</UpperBoundaryID>
+                </SelectionByID>
+            </glob:SalesOrderByElementsQuery_sync>
+        </soap:Body>
+    </soap:Envelope>
