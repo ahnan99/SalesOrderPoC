@@ -8,15 +8,7 @@ function* getSalesOrderListWatch() {
 
 
 export function getSalesOrderListEndpoint(data) {
-    return axios.post('/querysalesorderin3?sap-vhost=my335778.sapbydesign.com?wsdl', data, {
-        withCredentials: true,
-        headers:
-            { 'Content-Type': 'text/xml' },
-        auth: {
-            username: 'POCUSER',
-            password: 'Welcome1'
-        }
-    })
+    return axios.get('/SalesOrderByID', { params: data })
 }
 
 //workers
