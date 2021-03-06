@@ -3,8 +3,8 @@ import SalesOrderTable from '../../component/SalesOrderTable'
 import { actions as SalesOrderActions } from '../../modules/salesorder'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { FilterBar, Input, VariantManagement, FilterGroupItem, Switch, Select, Option, MultiComboBox, MultiComboBoxItem, DatePicker } from '@ui5/webcomponents-react'
-import {Space} from 'antd'
+import { FilterBar, Input, VariantManagement, FilterGroupItem, Select, Option, MultiComboBox, MultiComboBoxItem, DatePicker } from '@ui5/webcomponents-react'
+import { Space } from 'antd'
 class SalesOrderPage extends Component {
 
 
@@ -13,9 +13,14 @@ class SalesOrderPage extends Component {
         console.log(this.props.salesorder)
     }
 
+    onClickEnter = event => {
+        this.props.actions.updateSalesOrderList(null)
+        this.props.actions.getSalesOrderList({ id: event.target.value });
+    }
+
     render() {
         return (
-            <Space direction="vertical">
+            <Space direction="vertical" style={{ width: '100%' }}>
                 <FilterBar
                     className=""
                     filterContainerWidth="13.125rem"
@@ -37,23 +42,23 @@ class SalesOrderPage extends Component {
                     tooltip=""
                     variants={<VariantManagement selectedKey="2" variantItems={[{ key: '1', label: 'Variant 1' }, { key: '2', label: 'Variant 2' }]} />}
                 >
-                    <FilterGroupItem label="Input">
-                        <Input placeholder="Placeholder" />
+                    <FilterGroupItem label="Sales Order ID">
+                        <Input placeholder="Placeholder" onSubmit={this.onClickEnter} />
                     </FilterGroupItem>
                     <FilterGroupItem label="SELECT w/ initial selected">
                         <Select>
                             <Option>
                                 Option 1
-      </Option>
+                            </Option>
                             <Option selected>
                                 Option 2
-      </Option>
+                            </Option>
                             <Option>
                                 Option 3
-      </Option>
+                            </Option>
                             <Option>
                                 Option 4
-      </Option>
+                        </Option>
                         </Select>
                     </FilterGroupItem>
                     <FilterGroupItem label="SELECT w/o initial selected">
@@ -64,31 +69,31 @@ class SalesOrderPage extends Component {
                                 selected
                             >
                                 Test 1
-      </Option>
+                            </Option>
                             <Option
                                 data-key="Test 2"
                                 icon="add"
                             >
                                 Test 2
-      </Option>
+                            </Option>
                             <Option
                                 data-key="Test 3"
                                 icon="add"
                             >
                                 Test 3
-      </Option>
+                            </Option>
                             <Option
                                 data-key="Test 4"
                                 icon="add"
                             >
                                 Test 4
-      </Option>
+                            </Option>
                             <Option
                                 data-key="Test 5"
                                 icon="add"
                             >
                                 Test 5
-      </Option>
+                            </Option>
                         </Select>
                     </FilterGroupItem>
                     <FilterGroupItem

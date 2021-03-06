@@ -3,7 +3,6 @@ import { Table, TableRow, TableCell, Label, TableColumn } from "@ui5/webcomponen
 export default class SalesOrderTable extends Component {
 
     render() {
-
         return (
             <Table
                 className=""
@@ -29,9 +28,9 @@ export default class SalesOrderTable extends Component {
                 style={{}}
                 tooltip=""
             >
-                {(this.props.salesorder.salesOrderList) ?
+                {this.props.salesorder.salesOrderList ? (this.props.salesorder.salesOrderList.value.salesOrder.length > 0 ?
                     this.props.salesorder.salesOrderList.value.salesOrder.map(salesOrder => (
-                        <TableRow>
+                        <TableRow key={salesOrder.id.value}>
                             <TableCell>
                                 <Label>
                                     {salesOrder.id.value}
@@ -40,7 +39,7 @@ export default class SalesOrderTable extends Component {
                             <TableCell>
                                 <Label>
                                     {salesOrder.status.approvalStatusName.value}
-                                    </Label>
+                                </Label>
                             </TableCell>
                             <TableCell>
                                 <Label>
@@ -61,13 +60,39 @@ export default class SalesOrderTable extends Component {
                     )) : <TableRow>
                         <TableCell>
                             <Label>
-                               
-          </Label>
+
+                            </Label>
                         </TableCell>
                         <TableCell>
                             <Label>
-                                
-          </Label>
+
+                            </Label>
+                        </TableCell>
+                        <TableCell>
+                            <Label>
+                                No value for selected filter
+                            </Label>
+                        </TableCell>
+                        <TableCell>
+                            <Label>
+
+                            </Label>
+                        </TableCell>
+                        <TableCell>
+                            <Label>
+
+                            </Label>
+                        </TableCell>
+                    </TableRow>) : <TableRow>
+                        <TableCell>
+                            <Label>
+
+                            </Label>
+                        </TableCell>
+                        <TableCell>
+                            <Label>
+
+                            </Label>
                         </TableCell>
                         <TableCell>
                             <Label>
@@ -76,13 +101,13 @@ export default class SalesOrderTable extends Component {
                         </TableCell>
                         <TableCell>
                             <Label>
-                                
-          </Label>
+
+                            </Label>
                         </TableCell>
                         <TableCell>
                             <Label>
-                               
-          </Label>
+
+                            </Label>
                         </TableCell>
                     </TableRow>
 
