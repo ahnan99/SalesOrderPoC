@@ -3,19 +3,54 @@ import SalesOrderTable from '../../component/SalesOrderTable'
 import { actions as SalesOrderActions } from '../../modules/salesorder'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { FilterBar, Input, VariantManagement, FilterGroupItem, Select, Option, MultiComboBox, MultiComboBoxItem, DatePicker } from '@ui5/webcomponents-react'
+import { FilterBar, Input, VariantManagement, FilterGroupItem, DateRangePicker } from '@ui5/webcomponents-react'
 import { Space } from 'antd'
+import moment from 'moment'
 class SalesOrderPage extends Component {
-
+    constructor(props) {
+        super(props)
+        this.state = {
+            id: null,
+            dateTimeLower: null,
+            dateTimeUpper: null
+        }
+    }
 
     componentDidMount() {
-        this.props.actions.getSalesOrderList({ id: "2713" });
-        console.log(this.props.salesorder)
+        this.props.actions.updateSalesOrderList(null)
+        this.props.actions.getSalesOrderList({ id: this.state.id, dateTimeLower: moment().subtract(7, 'days').format(), dateTimeUpper: moment().format() });
     }
 
     onClickEnter = event => {
-        this.props.actions.updateSalesOrderList(null)
-        this.props.actions.getSalesOrderList({ id: event.target.value });
+        this.setState({ id: event.target.value === "" ? null : event.target.value }, () => {
+            if (!this.state.id && !this.state.dateTimeLower && !this.state.dateTimeUpper) {
+                this.componentDidMount()
+            } else {
+                this.props.actions.updateSalesOrderList(null)
+                this.props.actions.getSalesOrderList({ id: this.state.id, dateTimeLower: this.state.dateTimeLower, dateTimeUpper: this.state.dateTimeUpper });
+            }
+
+        })
+
+    }
+
+    onDateChange = event => {
+        this.setState({
+            dateTimeLower: event.target.value === "" ? null : moment(event.target.value.split(' - ')[0]).format(),
+            dateTimeUpper: event.target.value === "" ? null : moment(event.target.value.split(' - ')[1]).format()
+        },
+            () => {
+                if (!this.state.id && !this.state.dateTimeLower && !this.state.dateTimeUpper) {
+                    this.componentDidMount()
+                } else {
+                    this.props.actions.updateSalesOrderList(null)
+                    this.props.actions.getSalesOrderList({ id: this.state.id, dateTimeLower: this.state.dateTimeLower, dateTimeUpper: this.state.dateTimeUpper });
+                }
+            });
+    }
+
+    onFiltersDialogSearch = event => {
+        console.log(event)
     }
 
     render() {
@@ -30,12 +65,12 @@ class SalesOrderPage extends Component {
                     onFiltersDialogClose={function noRefCheck() { }}
                     onFiltersDialogOpen={function noRefCheck() { }}
                     onFiltersDialogSave={function noRefCheck() { }}
-                    onFiltersDialogSearch={function noRefCheck() { }}
+                    onFiltersDialogSearch={this.onFiltersDialogSearch}
                     onFiltersDialogSelectionChange={function noRefCheck() { }}
                     onGo={function noRefCheck() { }}
                     onRestore={function noRefCheck() { }}
                     onToggleFilters={function noRefCheck() { }}
-                    search={<Input placeholder="Search" />}
+                    search={<Input placeholder="Search" onSubmit={this.onClickEnter} />}
                     showFilterConfiguration
                     slot=""
                     style={{}}
@@ -43,92 +78,14 @@ class SalesOrderPage extends Component {
                     variants={<VariantManagement selectedKey="2" variantItems={[{ key: '1', label: 'Variant 1' }, { key: '2', label: 'Variant 2' }]} />}
                 >
                     <FilterGroupItem label="Sales Order ID">
-                        <Input placeholder="Placeholder" onSubmit={this.onClickEnter} />
-                    </FilterGroupItem>
-                    <FilterGroupItem label="SELECT w/ initial selected">
-                        <Select>
-                            <Option>
-                                Option 1
-                            </Option>
-                            <Option selected>
-                                Option 2
-                            </Option>
-                            <Option>
-                                Option 3
-                            </Option>
-                            <Option>
-                                Option 4
-                        </Option>
-                        </Select>
-                    </FilterGroupItem>
-                    <FilterGroupItem label="SELECT w/o initial selected">
-                        <Select>
-                            <Option
-                                data-key="Test 1"
-                                icon="add"
-                                selected
-                            >
-                                Test 1
-                            </Option>
-                            <Option
-                                data-key="Test 2"
-                                icon="add"
-                            >
-                                Test 2
-                            </Option>
-                            <Option
-                                data-key="Test 3"
-                                icon="add"
-                            >
-                                Test 3
-                            </Option>
-                            <Option
-                                data-key="Test 4"
-                                icon="add"
-                            >
-                                Test 4
-                            </Option>
-                            <Option
-                                data-key="Test 5"
-                                icon="add"
-                            >
-                                Test 5
-                            </Option>
-                        </Select>
-                    </FilterGroupItem>
-                    <FilterGroupItem
-                        groupName="Group 1"
-                        label="MultBox w/ initial selected"
-                    >
-                        <MultiComboBox>
-                            <MultiComboBoxItem text="MultiComboBoxItem 1" />
-                            <MultiComboBoxItem
-                                selected
-                                text="MultiComboBoxItem 2"
-                            />
-                            <MultiComboBoxItem text="MultiComboBoxItem 3" />
-                            <MultiComboBoxItem
-                                selected
-                                text="MultiComboBoxItem 4"
-                            />
-                        </MultiComboBox>
+                        <Input placeholder="ID" onSubmit={this.onClickEnter} />
                     </FilterGroupItem>
                     <FilterGroupItem
                         groupName="Group 2"
-                        label="MultBox w/o initial selected"
+                        label="Posting Date"
                     >
-                        <MultiComboBox>
-                            <MultiComboBoxItem text="MultiComboBoxItem 1" />
-                            <MultiComboBoxItem text="MultiComboBoxItem 2" />
-                            <MultiComboBoxItem text="MultiComboBoxItem 3" />
-                            <MultiComboBoxItem text="MultiComboBoxItem 4" />
-                        </MultiComboBox>
-                    </FilterGroupItem>
-                    <FilterGroupItem
-                        groupName="Group 2"
-                        label="Date Picker"
-                    >
-                        <DatePicker />
+                        <DateRangePicker formatPattern="YYYY/MM/dd"
+                            onChange={this.onDateChange} />
                     </FilterGroupItem>
                 </FilterBar>
                 <div> </div>
