@@ -6,45 +6,75 @@ import { connect } from 'react-redux'
 import { FilterBar, Input, VariantManagement, FilterGroupItem, DateRangePicker } from '@ui5/webcomponents-react'
 import { Space } from 'antd'
 import moment from 'moment'
+
+const orignalHit = 20
 class SalesOrderPage extends Component {
     constructor(props) {
         super(props)
         this.state = {
             id: null,
             dateTimeLower: null,
-            dateTimeUpper: null
+            dateTimeUpper: null,
+            maxHit: orignalHit,
+            upperId: null,
+            busy: false
         }
+    }
+
+    getEmptyCase() {
+        this.setState({ busy: true })
+        this.props.actions.getSalesOrderList({ id: this.state.id, dateTimeLower: moment().subtract(14, 'days').format(), dateTimeUpper: moment().format(), maxHit: this.state.maxHit });
     }
 
     componentDidMount() {
         this.props.actions.updateSalesOrderList(null)
-        this.props.actions.getSalesOrderList({ id: this.state.id, dateTimeLower: moment().subtract(7, 'days').format(), dateTimeUpper: moment().format() });
+        this.getEmptyCase()
     }
 
     onClickEnter = event => {
-        this.setState({ id: event.target.value === "" ? null : event.target.value }, () => {
+        this.setState({ id: event.target.value === "" ? null : event.target.value, maxHit: orignalHit }, () => {
             if (!this.state.id && !this.state.dateTimeLower && !this.state.dateTimeUpper) {
-                this.componentDidMount()
+                this.getEmptyCase()
             } else {
-                this.props.actions.updateSalesOrderList(null)
-                this.props.actions.getSalesOrderList({ id: this.state.id, dateTimeLower: this.state.dateTimeLower, dateTimeUpper: this.state.dateTimeUpper });
+                this.refresh()
             }
-
         })
+    }
 
+    onClickUpperEnter = event => {
+        this.setState({ upperId: event.target.value === "" ? null : event.target.value, maxHit: orignalHit }, () => {
+            if (!this.state.id && !this.state.dateTimeLower && !this.state.dateTimeUpper) {
+                this.getEmptyCase()
+            } else {
+                this.refresh()
+            }
+        })
+    }
+
+    onIdChange = event => {
+        this.setState({ id: event.target.value === "" ? null : event.target.value })
+    }
+
+    onUpperIdChange = event => {
+        this.setState({ upperId: event.target.value === "" ? null : event.target.value })
+    }
+
+    refresh() {
+        this.setState({ busy: true })
+        this.props.actions.getSalesOrderList({ id: this.state.id, dateTimeLower: this.state.dateTimeLower, dateTimeUpper: this.state.dateTimeUpper, upperId: this.state.upperId, maxHit: this.state.maxHit });
     }
 
     onDateChange = event => {
         this.setState({
             dateTimeLower: event.target.value === "" ? null : moment(event.target.value.split(' - ')[0]).format(),
-            dateTimeUpper: event.target.value === "" ? null : moment(event.target.value.split(' - ')[1]).format()
+            dateTimeUpper: event.target.value === "" ? null : moment(event.target.value.split(' - ')[1]).format(),
+            maxHit: orignalHit
         },
             () => {
                 if (!this.state.id && !this.state.dateTimeLower && !this.state.dateTimeUpper) {
-                    this.componentDidMount()
+                    this.getEmptyCase()
                 } else {
-                    this.props.actions.updateSalesOrderList(null)
-                    this.props.actions.getSalesOrderList({ id: this.state.id, dateTimeLower: this.state.dateTimeLower, dateTimeUpper: this.state.dateTimeUpper });
+                    this.refresh()
                 }
             });
     }
@@ -53,6 +83,29 @@ class SalesOrderPage extends Component {
         console.log(event)
     }
 
+    onGo = event => {
+        this.setState({ maxHit: orignalHit })
+        if (!this.state.id && !this.state.dateTimeLower && !this.state.dateTimeUpper) {
+            this.getEmptyCase()
+        } else {
+            this.refresh()
+        }
+    }
+
+    onLoadMore = event => {
+        this.setState({ maxHit: this.state.maxHit + 10 })
+        if (!this.state.id && !this.state.dateTimeLower && !this.state.dateTimeUpper) {
+            this.componentDidMount()
+        } else {
+            this.refresh()
+        }
+    }
+
+    componentDidUpdate = prevProps => {
+        if (prevProps.salesorder.salesOrderList !== this.props.salesorder.salesOrderList) {
+            this.setState({ busy: false })
+        }
+    }
     render() {
         return (
             <Space direction="vertical" style={{ width: '100%' }}>
@@ -67,18 +120,22 @@ class SalesOrderPage extends Component {
                     onFiltersDialogSave={function noRefCheck() { }}
                     onFiltersDialogSearch={this.onFiltersDialogSearch}
                     onFiltersDialogSelectionChange={function noRefCheck() { }}
-                    onGo={function noRefCheck() { }}
+                    onGo={this.onGo}
                     onRestore={function noRefCheck() { }}
                     onToggleFilters={function noRefCheck() { }}
-                    search={<Input placeholder="Search" onSubmit={this.onClickEnter} />}
                     showFilterConfiguration
+                    showGo
+                    showGoOnFB
                     slot=""
                     style={{}}
                     tooltip=""
                     variants={<VariantManagement selectedKey="2" variantItems={[{ key: '1', label: 'Variant 1' }, { key: '2', label: 'Variant 2' }]} />}
                 >
                     <FilterGroupItem label="Sales Order ID">
-                        <Input placeholder="ID" onSubmit={this.onClickEnter} />
+                        <Input placeholder="ID" onSubmit={this.onClickEnter} onChange={this.onIdChange} />
+                    </FilterGroupItem>
+                    <FilterGroupItem label="Sales Order ID Upper Boundary">
+                        <Input placeholder="Upper ID" onSubmit={this.onClickUpperEnter} onChange={this.onUpperIdChange} />
                     </FilterGroupItem>
                     <FilterGroupItem
                         groupName="Group 2"
@@ -89,7 +146,7 @@ class SalesOrderPage extends Component {
                     </FilterGroupItem>
                 </FilterBar>
                 <div> </div>
-                <SalesOrderTable salesorder={this.props.salesorder} actions={this.props.actions} />
+                <SalesOrderTable salesorder={this.props.salesorder} actions={this.props.actions} onLoadMore={this.onLoadMore} busy={this.state.busy} />
             </Space>
         )
     }
