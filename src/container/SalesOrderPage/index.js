@@ -33,7 +33,7 @@ class SalesOrderPage extends Component {
 
     onClickEnter = event => {
         this.setState({ id: event.target.value === "" ? null : event.target.value, maxHit: orignalHit }, () => {
-            if (!this.state.id && !this.state.dateTimeLower && !this.state.dateTimeUpper) {
+            if (!this.state.id && !this.state.upperId && !this.state.dateTimeLower && !this.state.dateTimeUpper) {
                 this.getEmptyCase()
             } else {
                 this.refresh()
@@ -43,7 +43,7 @@ class SalesOrderPage extends Component {
 
     onClickUpperEnter = event => {
         this.setState({ upperId: event.target.value === "" ? null : event.target.value, maxHit: orignalHit }, () => {
-            if (!this.state.id && !this.state.dateTimeLower && !this.state.dateTimeUpper) {
+            if (!this.state.id && !this.state.upperId && !this.state.dateTimeLower && !this.state.dateTimeUpper) {
                 this.getEmptyCase()
             } else {
                 this.refresh()
@@ -61,7 +61,11 @@ class SalesOrderPage extends Component {
 
     refresh() {
         this.setState({ busy: true })
-        this.props.actions.getSalesOrderList({ id: this.state.id, dateTimeLower: this.state.dateTimeLower, dateTimeUpper: this.state.dateTimeUpper, upperId: this.state.upperId, maxHit: this.state.maxHit });
+        if (this.state.upperId && (!this.state.id || this.state.id === '')) {
+            this.props.actions.getSalesOrderList({ id: this.state.upperId, dateTimeLower: this.state.dateTimeLower, dateTimeUpper: this.state.dateTimeUpper, upperId: this.state.upperId, maxHit: this.state.maxHit });
+        } else {
+            this.props.actions.getSalesOrderList({ id: this.state.id, dateTimeLower: this.state.dateTimeLower, dateTimeUpper: this.state.dateTimeUpper, upperId: this.state.upperId, maxHit: this.state.maxHit });
+        }
     }
 
     onDateChange = event => {
@@ -71,7 +75,7 @@ class SalesOrderPage extends Component {
             maxHit: orignalHit
         },
             () => {
-                if (!this.state.id && !this.state.dateTimeLower && !this.state.dateTimeUpper) {
+                if (!this.state.id && !this.state.upperId && !this.state.dateTimeLower && !this.state.dateTimeUpper) {
                     this.getEmptyCase()
                 } else {
                     this.refresh()
@@ -85,7 +89,7 @@ class SalesOrderPage extends Component {
 
     onGo = event => {
         this.setState({ maxHit: orignalHit })
-        if (!this.state.id && !this.state.dateTimeLower && !this.state.dateTimeUpper) {
+        if (!this.state.id && !this.state.upperId && !this.state.dateTimeLower && !this.state.dateTimeUpper) {
             this.getEmptyCase()
         } else {
             this.refresh()
@@ -94,7 +98,7 @@ class SalesOrderPage extends Component {
 
     onLoadMore = event => {
         this.setState({ maxHit: this.state.maxHit + 10 })
-        if (!this.state.id && !this.state.dateTimeLower && !this.state.dateTimeUpper) {
+        if (!this.state.id && !this.state.upperId && !this.state.dateTimeLower && !this.state.dateTimeUpper) {
             this.componentDidMount()
         } else {
             this.refresh()

@@ -7,7 +7,7 @@ export default class SalesOrderTable extends Component {
         return (
             <BusyIndicator
                 active={this.props.busy}
-                style={{width:"100%"}}
+                style={{ width: "100%" }}
             >
                 <Table
                     className=""
@@ -94,7 +94,7 @@ export default class SalesOrderTable extends Component {
 
                                 </Label>
                             </TableCell>
-                            <TableCell>
+                            <TableCell style={{ textAlign: 'center' }}>
                                 <Label>
                                     No value for selected filter
                             </Label>
@@ -132,7 +132,7 @@ export default class SalesOrderTable extends Component {
                         </TableCell>
                         <TableCell>
                             <Label>
-                                
+
                             </Label>
                         </TableCell>
                         <TableCell>
