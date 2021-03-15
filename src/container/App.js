@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import routes from '../routes'
-import { Route, Switch } from 'react-router-dom'
+import { Route, Switch, Redirect } from 'react-router-dom'
 import { Layout, Avatar } from 'antd';
 import axios from 'axios'
 import { actions as SalesOrderActions } from '../modules/salesorder'
@@ -65,6 +65,7 @@ class App extends Component {
         <Content style={{ padding: '25px 25px' }}>
           <div className="site-layout-content">  <Switch>
             {this.routes}
+            <Redirect exact from="/" to="/SalesOrder" />
           </Switch></div>
         </Content>
         <Footer style={{ textAlign: 'center' }}>Sales Order Test</Footer>
