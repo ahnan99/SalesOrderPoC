@@ -1,0 +1,20 @@
+version: '3.7'
+
+services: 
+
+  middleware:
+    image: ahnan99/salesorderpocmiddleware
+    container_name: middleware
+    ports:
+      - "8080:8080"
+
+  salesorderreact:
+    container_name: horae-app
+    image: ahnan99/salesorderpoc
+    ports: 
+      - '3000:80'
+    volumes:
+      - ./horae-app-ui:/app
+      - /app/node_modules
+    environment: 
+      - REACT_APP_REMOTE=true

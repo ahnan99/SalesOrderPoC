@@ -3,15 +3,25 @@ import routes from '../routes'
 import { Route, Switch } from 'react-router-dom'
 import { Layout, Avatar } from 'antd';
 import axios from 'axios'
-import { ShellBar, StandardListItem } from '@ui5/webcomponents-react'
+import { actions as SalesOrderActions } from '../modules/salesorder'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import { ShellBar, StandardListItem, Button } from '@ui5/webcomponents-react'
+import "@ui5/webcomponents-icons/dist/nav-back.js"
 import logo from '../static/sap-logo-svg.svg'
 import 'antd/dist/antd.css'
 import './App.css'
+import { withRouter } from 'react-router-dom'
 
 const { Content, Footer } = Layout;
+const production = process.env.REACT_APP_REMOTE || process.env.NODE_ENV === "production"
+axios.defaults.baseURL = production ? "http://116.62.239.140:8080" : "http://localhost:8080"
+class App extends Component {
 
-axios.defaults.baseURL = "http://localhost:8080"
-export default class App extends Component {
+  onBack = () => {
+    this.props.actions.updateSelectedSalesOrder(null)
+    this.props.history.goBack()
+  }
 
   get routes() {
 
@@ -39,6 +49,15 @@ export default class App extends Component {
           profile={<Avatar>U</Avatar>}
           showNotifications
           showProductSwitch
+          startButton={this.props.salesorder.selectedSalesOrder ? <Button
+            className=""
+            design="Transparent"
+            onClick={() => this.onBack()}
+            icon="nav-back"
+            slot=""
+            style={{}}
+            tooltip=""
+          /> : null}
           slot=""
           style={{}}
           tooltip=""
@@ -51,9 +70,19 @@ export default class App extends Component {
         <Footer style={{ textAlign: 'center' }}>Sales Order Test</Footer>
       </Layout>
 
-
-
     )
   }
 }
+
+
+const mapStateToProps = state => ({
+  salesorder: state.salesorder
+})
+
+const mapDispatchToProps = dispatch => ({
+  actions: bindActionCreators(SalesOrderActions, dispatch)
+})
+
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App))
 

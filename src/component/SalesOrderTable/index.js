@@ -1,7 +1,13 @@
 import React, { Component } from 'react'
-import { Table, TableRow, TableCell, Label, TableColumn, BusyIndicator } from "@ui5/webcomponents-react";
+import { Table, TableRow, TableCell, Label, TableColumn, BusyIndicator, Icon } from "@ui5/webcomponents-react";
 import moment from 'moment'
-export default class SalesOrderTable extends Component {
+import { withRouter } from 'react-router-dom'
+class SalesOrderTable extends Component {
+
+    onOrderClick = item => {
+        this.props.actions.updateSelectedSalesOrder(item)
+        this.props.history.push('/SalesOrderDetail?SalesOrderId=' + item.id.value)
+    }
 
     render() {
         return (
@@ -30,6 +36,9 @@ export default class SalesOrderTable extends Component {
                         </TableColumn>
                         <TableColumn demandPopin>
                             <Label>External Reference</Label>
+                        </TableColumn>
+                        <TableColumn demandPopin>
+                            <Label> </Label>
                         </TableColumn></>}
                     growing={this.props.salesorder.salesOrderList ? (this.props.salesorder.salesOrderList.value.processingConditions.moreHitsAvailableIndicator ? "Button" : "TableGrowingMode.None") : "TableGrowingMode.None"}
                     onLoadMore={this.props.onLoadMore}
@@ -77,6 +86,9 @@ export default class SalesOrderTable extends Component {
                                         {salesOrder.buyerID ? salesOrder.buyerID.value : null}
                                     </Label>
                                 </TableCell>
+                                <TableCell>
+                                    <Icon name="navigation-right-arrow" interactive onClick={() => this.onOrderClick(salesOrder)} />
+                                </TableCell>
                             </TableRow>
                         )) : <TableRow>
                             <TableCell>
@@ -109,8 +121,18 @@ export default class SalesOrderTable extends Component {
 
                                 </Label>
                             </TableCell>
+                            <TableCell>
+                                <Label>
+
+                                </Label>
+                            </TableCell>
                         </TableRow>) : <TableRow>
                         <TableCell>
+                            <TableCell>
+                                <Label>
+
+                                </Label>
+                            </TableCell>
                             <Label>
 
                             </Label>
@@ -150,3 +172,4 @@ export default class SalesOrderTable extends Component {
 }
 
 
+export default withRouter(SalesOrderTable)

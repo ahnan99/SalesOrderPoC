@@ -7,80 +7,78 @@ import { FilterBar, Input, VariantManagement, FilterGroupItem, DateRangePicker }
 import { Space } from 'antd'
 import moment from 'moment'
 
-const orignalHit = 20
 class SalesOrderPage extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            id: null,
-            dateTimeLower: null,
-            dateTimeUpper: null,
-            maxHit: orignalHit,
-            upperId: null,
             busy: false
         }
+        this.idInput = React.createRef();
+        this.upperIdInput = React.createRef();
+        this.dateRangeInput = this.switch = React.createRef();
     }
 
     getEmptyCase() {
         this.setState({ busy: true })
-        this.props.actions.getSalesOrderList({ id: this.state.id, dateTimeLower: moment().subtract(14, 'days').format(), dateTimeUpper: moment().format(), maxHit: this.state.maxHit });
+        this.props.actions.getSalesOrderList({ id: this.props.salesorder.id, dateTimeLower: moment().subtract(14, 'days').format(), dateTimeUpper: moment().format(), maxHit: this.props.salesorder.maxHit });
     }
 
     componentDidMount() {
-        this.props.actions.updateSalesOrderList(null)
-        this.getEmptyCase()
+        if (!this.props.salesorder.salesOrderList) {
+            this.getEmptyCase()
+        }
     }
 
     onClickEnter = event => {
-        this.setState({ id: event.target.value === "" ? null : event.target.value, maxHit: orignalHit }, () => {
-            if (!this.state.id && !this.state.upperId && !this.state.dateTimeLower && !this.state.dateTimeUpper) {
-                this.getEmptyCase()
-            } else {
-                this.refresh()
-            }
-        })
+        this.props.actions.updateId(event.target.value === "" ? null : event.target.value)
+        this.props.actions.resetMaxHit()
+        if (!this.props.salesorder.id && !this.props.salesorder.upperId && !this.props.salesorder.dateTimeLower && !this.props.salesorder.dateTimeUpper) {
+            this.getEmptyCase()
+        } else {
+            this.refresh()
+        }
+
     }
 
     onClickUpperEnter = event => {
-        this.setState({ upperId: event.target.value === "" ? null : event.target.value, maxHit: orignalHit }, () => {
-            if (!this.state.id && !this.state.upperId && !this.state.dateTimeLower && !this.state.dateTimeUpper) {
-                this.getEmptyCase()
-            } else {
-                this.refresh()
-            }
-        })
+        this.props.actions.updateUpperId(event.target.value === "" ? null : event.target.value)
+        this.props.actions.resetMaxHit()
+        if (!this.props.salesorder.id && !this.props.salesorder.upperId && !this.props.salesorder.dateTimeLower && !this.props.salesorder.dateTimeUpper) {
+            this.getEmptyCase()
+        } else {
+            this.refresh()
+        }
     }
 
+
     onIdChange = event => {
-        this.setState({ id: event.target.value === "" ? null : event.target.value })
+        this.props.actions.updateId(event.target.value === "" ? null : event.target.value)
     }
 
     onUpperIdChange = event => {
-        this.setState({ upperId: event.target.value === "" ? null : event.target.value })
+        this.props.actions.updateUpperId(event.target.value === "" ? null : event.target.value)
     }
 
     refresh() {
         this.setState({ busy: true })
-        if (this.state.upperId && (!this.state.id || this.state.id === '')) {
-            this.props.actions.getSalesOrderList({ id: this.state.upperId, dateTimeLower: this.state.dateTimeLower, dateTimeUpper: this.state.dateTimeUpper, upperId: this.state.upperId, maxHit: this.state.maxHit });
+        if (this.props.salesorder.upperId && (!this.props.salesorder.id || this.props.salesorder.id === '')) {
+            this.props.actions.getSalesOrderList({ id: this.props.salesorder.upperId, dateTimeLower: this.props.salesorder.dateTimeLower, dateTimeUpper: this.props.salesorder.dateTimeUpper, upperId: this.props.salesorder.upperId, maxHit: this.props.salesorder.maxHit });
         } else {
-            this.props.actions.getSalesOrderList({ id: this.state.id, dateTimeLower: this.state.dateTimeLower, dateTimeUpper: this.state.dateTimeUpper, upperId: this.state.upperId, maxHit: this.state.maxHit });
+            this.props.actions.getSalesOrderList({ id: this.props.salesorder.id, dateTimeLower: this.props.salesorder.dateTimeLower, dateTimeUpper: this.props.salesorder.dateTimeUpper, upperId: this.props.salesorder.upperId, maxHit: this.props.salesorder.maxHit });
         }
     }
 
     onDateChange = event => {
-        this.setState({
-            dateTimeLower: event.target.value === "" ? null : moment(event.target.value.split(' - ')[0]).format(),
-            dateTimeUpper: event.target.value === "" ? null : moment(event.target.value.split(' - ')[1]).format(),
-            maxHit: orignalHit
-        },
-            () => {
-                if (!this.state.id && !this.state.upperId && !this.state.dateTimeLower && !this.state.dateTimeUpper) {
-                    this.getEmptyCase()
-                } else {
-                    this.refresh()
-                }
-            });
+        this.props.actions.updateDateLower(event.target.value === "" ? null : moment(event.target.value.split(' - ')[0]).format())
+        this.props.actions.updateDateUpper(event.target.value === "" ? null : moment(event.target.value.split(' - ')[1]).format())
+        this.props.actions.updateDateRange(event.target.value === "" ? null : event.target.value)
+        this.props.actions.resetMaxHit()
+        if (!this.props.salesorder.id && !this.props.salesorder.upperId && !this.props.salesorder.dateTimeLower && !this.props.salesorder.dateTimeUpper) {
+            this.getEmptyCase()
+        } else {
+            this.refresh()
+        }
+
     }
 
     onFiltersDialogSearch = event => {
@@ -88,8 +86,8 @@ class SalesOrderPage extends Component {
     }
 
     onGo = event => {
-        this.setState({ maxHit: orignalHit })
-        if (!this.state.id && !this.state.upperId && !this.state.dateTimeLower && !this.state.dateTimeUpper) {
+        this.props.actions.resetMaxHit()
+        if (!this.props.salesorder.id && !this.props.salesorder.upperId && !this.props.salesorder.dateTimeLower && !this.props.salesorder.dateTimeUpper) {
             this.getEmptyCase()
         } else {
             this.refresh()
@@ -97,8 +95,8 @@ class SalesOrderPage extends Component {
     }
 
     onLoadMore = event => {
-        this.setState({ maxHit: this.state.maxHit + 10 })
-        if (!this.state.id && !this.state.upperId && !this.state.dateTimeLower && !this.state.dateTimeUpper) {
+        this.props.actions.updateMaxHit(this.props.salesorder.maxHit + 10)
+        if (!this.props.salesorder.id && !this.props.salesorder.upperId && !this.props.salesorder.dateTimeLower && !this.props.salesorder.dateTimeUpper) {
             this.componentDidMount()
         } else {
             this.refresh()
@@ -136,17 +134,19 @@ class SalesOrderPage extends Component {
                     variants={<VariantManagement selectedKey="2" variantItems={[{ key: '1', label: 'Variant 1' }, { key: '2', label: 'Variant 2' }]} />}
                 >
                     <FilterGroupItem label="Sales Order ID">
-                        <Input placeholder="ID" onSubmit={this.onClickEnter} onChange={this.onIdChange} />
+                        <Input value={this.props.salesorder.id} placeholder="ID" onSubmit={this.onClickEnter} onChange={this.onIdChange} />
                     </FilterGroupItem>
                     <FilterGroupItem label="Sales Order ID Upper Boundary">
-                        <Input placeholder="Upper ID" onSubmit={this.onClickUpperEnter} onChange={this.onUpperIdChange} />
+                        <Input value={this.props.salesorder.upperId} placeholder="Upper ID" onSubmit={this.onClickUpperEnter} onChange={this.onUpperIdChange} />
                     </FilterGroupItem>
                     <FilterGroupItem
                         groupName="Group 2"
                         label="Posting Date"
                     >
-                        <DateRangePicker formatPattern="YYYY/MM/dd"
-                            onChange={this.onDateChange} />
+                        <DateRangePicker
+                            formatPattern="YYYY/MM/dd"
+                            onChange={this.onDateChange}
+                            value={this.props.salesorder.dateRange} />
                     </FilterGroupItem>
                 </FilterBar>
                 <div> </div>
