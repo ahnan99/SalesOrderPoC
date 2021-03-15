@@ -42,7 +42,6 @@ class SalesOrderObjectPage extends Component {
                     <FlexBox direction="Column"><Label>Posting Date</Label><Label>{moment(selectedSalesOrder.postingDate).format('YYYY/MM/DD')}</Label></FlexBox></>}
                 headerContentPinnable
                 imageShapeCircle
-                keyInfos={<ObjectStatus state="Success">Open</ObjectStatus>}
                 onSelectedSectionChanged={function noRefCheck() { }}
                 selectedSectionId="general"
                 showHideHeaderButton
