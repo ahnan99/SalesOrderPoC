@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { Table, TableRow, TableCell, Label, TableColumn, BusyIndicator, Icon } from "@ui5/webcomponents-react";
 import moment from 'moment'
 import { withRouter } from 'react-router-dom'
+import '@ui5/webcomponents-icons/dist/navigation-right-arrow.js'
+
 class SalesOrderTable extends Component {
 
     onOrderClick = item => {

@@ -35,7 +35,7 @@ class SalesOrderObjectPage extends Component {
                 className=""
                 headerActions={[
                     <Button key="1" design="Emphasized">Edit</Button>,
-                    <Button key="2">Cancel</Button>
+                    <Button key="2" onClick={() => { this.props.history.push('/SalesOrder') }}>Cancel</Button>
                 ]}
                 headerContent={<>
                     <FlexBox direction="Column"><Label>Status</Label><Label>{selectedSalesOrder.status.itemListCustomerOrderLifeCycleStatusName.value}</Label></FlexBox>
@@ -65,7 +65,7 @@ class SalesOrderObjectPage extends Component {
                         columnsXL={3}
                         labelSpanL={6}
                         labelSpanM={6}
-                        labelSpanXL={8}
+                        labelSpanXL={6}
                     >
                         <FormGroup title="Basic">
                             <FormItem label="Invoicing Blocking">
